@@ -2,9 +2,9 @@ import streamlit as st
 import modules.user_management as user_management
 
 if "role" not in st.session_state:
-    st.session_state.role = "admin"
-    st.session_state.user_name = "martin"
-    st.session_state.user_status: bool = True
+    st.session_state.role = ""
+    st.session_state.user_name = ""
+    st.session_state.user_status: bool = False
 
 # Define functions -----------------------------------------------------------
 def login():
