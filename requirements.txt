@@ -76,7 +76,7 @@ platformdirs
 primp
 prompt-toolkit
 proto-plus
-protobuf
+protobuf==3.20.*
 psutil
 ptyprocess
 pure-eval
