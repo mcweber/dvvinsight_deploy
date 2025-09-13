@@ -1,7 +1,8 @@
 # ---------------------------------------------------
-# Version: 19.03.2025
+# Version: 13.09.2025
 # Author: M. Weber
 # ---------------------------------------------------
+# 12.09.2025 Replaced group_by function to acc startup
 # ---------------------------------------------------
 
 import streamlit as st
@@ -9,7 +10,7 @@ import streamlit as st
 import modules.ask_llm as ask_llm
 import modules.ask_web as ask_web
 import modules.ask_mongo as ask_mongo
-import modules.user_management as user_management
+import modules.user_management_sql as user_management
 
 SEARCH_TYPES = ("rag", "vektor", "volltext", "web")
 PUBS = {
@@ -21,20 +22,23 @@ PUBS = {
     "Industrie": ("pi_AuD", "pi_PuA", "pi_EuE", "pi_E20", "pi_Industry_Forward", "pi_Industrial_Solutions", "pi_Next_Technology", "pi_")
 }
 MARKTBEREICHE = list(PUBS.keys())
+PUBLIKATIONEN = [value for sublist in PUBS.values() for value in sublist]
 VECTOR_SEARCH_SCORE = 0.8
 TEXT_SEARCH_SCORE = 9.0
-LLM = "gpt-4o"
+LLM = "gpt-5"
 
 # ---------------------------------------------------
 # Functions
 # ---------------------------------------------------
 
 @st.cache_resource
-def init_llm(llm: str = "gpt-4o", local: bool = False):
+def init_llm(llm: str = LLM, local: bool = False):
+    print(f"init_llm {llm} [OK]")
     return ask_llm.LLMHandler(llm=llm, local=local)
 
 @st.cache_resource
 def init_websearch():
+    print("init_websearch [OK]")
     return ask_web.WebSearch()
 
 @st.dialog("DokumentenAnsicht")
@@ -95,7 +99,7 @@ def main() -> None:
     # Initialize Session State -----------------------------------------
     if 'init' not in st.session_state:
         st.session_state.init = True
-        st.session_state.feld_liste: list = list(ask_mongo.group_by_field().keys())
+        st.session_state.feld_liste:list = PUBLIKATIONEN 
         st.session_state.marktbereich: str = "Alle"
         st.session_state.marktbereich_index: int = 0
         st.session_state.rag_db_suche: bool = True
@@ -281,7 +285,6 @@ def main() -> None:
         
             # LLM Search ------------------------------------------------
             summary = llm.ask_llm(
-                temperature=0.2,
                 question=question,
                 history=[],
                 system_prompt=st.session_state.system_prompt,
