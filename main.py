@@ -1,5 +1,5 @@
 import streamlit as st
-import modules.user_management as user_management
+import modules.user_management_sql as user_management
 
 if "role" not in st.session_state:
     st.session_state.role = None 
